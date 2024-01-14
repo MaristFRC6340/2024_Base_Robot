@@ -18,11 +18,17 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.DriveCommand;
+import frc.robot.commands.LaunchNote;
+import frc.robot.commands.PrepareLaunch;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import java.util.List;
 
 /*
@@ -34,10 +40,14 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-
+  private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
+  Trigger y = new JoystickButton(m_driverController, XboxController.Button.kY.value);
+  Trigger a = new JoystickButton(m_driverController, XboxController.Button.kA.value);
+
+  private final DriveCommand m_DriveCommand = new DriveCommand(m_robotDrive);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -46,16 +56,19 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true, true),
-            m_robotDrive));
+    // m_robotDrive.setDefaultCommand(
+    //     // The left stick controls translation of the robot.
+    //     // Turning is controlled by the X axis of the right stick.
+    //     new RunCommand(
+    //         () -> m_robotDrive.drive(
+    //             -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+    //             -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+    //             -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+    //             true, true),
+    //         m_robotDrive));
+
+
+
   }
 
   /**
@@ -72,6 +85,17 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+    
+    y.whileTrue(
+        new PrepareLaunch(m_ShooterSubsystem)
+        .withTimeout(.25)
+        .andThen(new LaunchNote(m_ShooterSubsystem))
+        .handleInterrupt(()-> m_ShooterSubsystem.stop())
+    );
+
+    a.whileTrue(
+        m_ShooterSubsystem.getIntakeCommand()
+    );
   }
 
   /**
@@ -118,5 +142,9 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+  }
+
+  public Command getDriveCommand() {
+    return m_DriveCommand;
   }
 }

@@ -69,7 +69,7 @@ public final class Constants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
     // robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 14;
+    public static final int kDrivingMotorPinionTeeth = 13;
 
     // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
@@ -95,7 +95,7 @@ public final class Constants {
     public static final double kTurningEncoderPositionPIDMinInput = 0; // radians
     public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
 
-    public static final double kDrivingP = 0.04;
+    public static final double kDrivingP = 0.121;
     public static final double kDrivingI = 0;
     public static final double kDrivingD = 0;
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps;
@@ -138,5 +138,27 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+  public static class LauncherConstants {
+    // PWM ports/CAN IDs for motor controllers
+    public static final int kFeederID = 6;
+    public static final int kLauncherID = 5;
+
+    // Current limit for launcher and feed wheels
+    public static final int kLauncherCurrentLimit = 80;
+    public static final int kFeedCurrentLimit = 80;
+
+    // Speeds for wheels when intaking and launching. Intake speeds are negative to run the wheels
+    // in reverse
+    public static final double kLauncherSpeed = 1;
+    public static final double kLaunchFeederSpeed = 1;
+    public static final double kIntakeLauncherSpeed = -1;
+    public static final double kIntakeFeederSpeed = -.2;
+
+    public static final double kLauncherDelay = 1;
+
+
+    public static double kIntakeTopMotor = -1;
+    public static double kIntakeLowerMotor = -1;
   }
 }
