@@ -161,4 +161,17 @@ public final class Constants {
     public static double kIntakeTopMotor = -1;
     public static double kIntakeLowerMotor = -1;
   }
+
+  public static final class ClimberConstants{
+
+    public static int kLeftClimberID;
+    public static int kRightClimberID;
+    public static double kClimbHeight;
+    public static double kLeftMax;
+    public static double kRightMax;
+    public static double kLeftMin;
+    public static double kRightMin;
+    public static double kLowerSpeed;
+
+  }
 }
